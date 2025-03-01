@@ -106,5 +106,33 @@ architecture structurual is
 	    );
 	end component;
 
+	signal currentPC : std_logic_vector(31 downto 0); -- coming out of the PC register
+	signal nextPC : std_logic_vector(31 downto 0); -- coming out of the mux on the top right in diagram
+	signal PCPlus4 : std_logic_vector(31 downto 0); -- coming out of the PC+4 incrementer
+
+	signal jump_address : std_logic_vector(31 downto 0); -- coming out of the shifter with pc + 4 being the top four bits
+
+	--TODO: add the Zero signal from the ALU
+
+	signal regDst : std_logic;
+	signal jump : std_logic;
+	signal branch : std_logic;
+	signal memRead : std_logic;
+	signal memtoReg : std_logic;
+	signal aluOp : std_logic_vector(2 downto 0);
+	signal memWrite : std_logic;
+	signal aluSrc : std_logic;
+	signal regWrite : std_logic;
+
+	signal write_data_reg : std_logic_vector(31 downto 0);
+	signal reg_o_s : std_logic_vector(31 downto 0);
+	signal reg_o_t : std_logic_vector(31 downto 0);
+
+	signal immeditate_extended : std_logic_vector(31 downto 0);
+	signal dmem_read_data : std_logic_vector(31 downto 0);
+
+	signal ALU_result : std_logic_vector(31 downto 0);
+
+
 end structural;
 

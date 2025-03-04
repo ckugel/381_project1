@@ -9,6 +9,9 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 -- combine the following components into a single entity: ALU, RegisterFile, Memory, Control Unit, Program Counter, Program Counter Incrementer
 entity singleCycleCPU is 
+    port(
+	    i_clk : in std_logic;
+	);
 end singleCycleCPU;
 
 architecture structurual is
@@ -38,13 +41,17 @@ architecture structurual is
 		);
 	end component;
 
-	component Memory is
+	component mem is
+		generic(
+			DATA_WIDTH : natural := 32,
+			ADD_WIDTH : natural := 32
+		       );
 		port(
-			address : in std_logic_vector(31 downto 0);
-			writeData : in std_logic_vector(31 downto 0);
-			memWrite : in std_logic;
-			memRead : in std_logic;
-			readData : out std_logic_vector(31 downto 0)
+		clk : in std_logic;
+		addr : in std_logic_vector(ADDR_WIDTH - 1 downto 0);
+		data : in std_logic_vector(DATA_WIDTH - 1 downto 0);
+		we : in std_logic := '1';
+		q : out std_logic_vector(DATA_WIDTH-1 downto 0)
 		);
 	end component;
 
@@ -74,9 +81,6 @@ architecture structurual is
 
 	component ProgramCounterIncrementer is
 		port(
-			clk : in std_logic;
-			reset : in std_logic;
-			enable : in std_logic;
 			PC : in std_logic_vector(31 downto 0);
 			PCPlus4 : out std_logic_vector(31 downto 0)
 		);
@@ -99,12 +103,31 @@ architecture structurual is
 	    );
     	end component;
 
+	component reg_n is
+	    generic(n : integer : 32);
+	    port(
+		    i_CLK : std_logic;
+		    i_RST : std_logic;
+		    i_WE : std_logic;
+		    i_Data : std_logic_vector(n - 1 downto 0);
+		    o_Q : std_logic_vector(n-1 downto 0)
+		);
+
 	component sign_extender_16_32 is
 	    port(
 		input : in std_logic_vector(15 downto 0);
 		output : out std_logic_vector(31 downto 0)
 	    );
 	end component;
+
+	component andg2 is 
+	    port (
+		i_A : in std_logic;
+		i_B : in std_logic;
+		o_F : out std_logic;
+		    );
+
+	signal globalReset : std_logic; -- anywhere reset can be done it should be done throught this for the start of the program
 
 	signal currentPC : std_logic_vector(31 downto 0); -- coming out of the PC register
 	signal nextPC : std_logic_vector(31 downto 0); -- coming out of the mux on the top right in diagram
@@ -113,6 +136,8 @@ architecture structurual is
 	signal jump_address : std_logic_vector(31 downto 0); -- coming out of the shifter with pc + 4 being the top four bits
 
 	--TODO: add the Zero signal from the ALU
+
+	signal instruction : std_logic_vector(31 downto 0);
 
 	signal regDst : std_logic;
 	signal jump : std_logic;
@@ -127,11 +152,55 @@ architecture structurual is
 	signal write_data_reg : std_logic_vector(31 downto 0);
 	signal reg_o_s : std_logic_vector(31 downto 0);
 	signal reg_o_t : std_logic_vector(31 downto 0);
+	signal s_o_zero : std_logic;
 
 	signal immeditate_extended : std_logic_vector(31 downto 0);
 	signal dmem_read_data : std_logic_vector(31 downto 0);
+	signal ALU_B : std_logic_vector(31 downto 0); -- ALU second input either port s or immediate depending on mux
+	signal ALU_operation : std_logic_vector(31 downto 0); -- post ALU op controller into ALU
 
 	signal ALU_result : std_logic_vector(31 downto 0);
+
+	-- Define ALU inputs and outputs
+	ALU0: ALU
+	port map(
+		A =>  reg_o_t,
+		B => ALU_B,
+		ALUControl => ALU_operation,
+		result => ALU_result,
+		zero => s_o_zero,
+	    );
+
+	-- Define the program counter
+	programCounterReg : reg_n
+	generic map(n => 32);
+	port map(
+		    i_CLK => ,
+		    i_RST => ,
+		    i_WE => '1',
+		    i_Data => nextPC,
+		    o_Q => currentPC
+		);
+
+	-- define the read only instruction memory
+	instructionMemory : mem 
+	generic map (
+	DATA_WIDTH => 32,
+	ADDR_WIDTH => 10
+		    );
+		    port map(
+		    clk => i_clk,
+		    addr => currentPC, 
+		    we => '0',
+		    q => instruction
+			    );
+	
+	-- dwfine program counter incrementer
+	PCInc : ProgramCounterIncrementer
+	port map(
+		PC => currentPC,
+		PCPlus4 => PCPlus4
+		)
 
 
 end structural;

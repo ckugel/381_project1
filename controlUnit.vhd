@@ -20,6 +20,7 @@ entity controlUnit is
         Branch : out std_logic;
         MemRead : out std_logic;
         ALUControl : out std_logic_vector(3 downto 0);
+        ALUOp : out std_logic_vector(1 downto 0)
     );
 end controlUnit;
 
@@ -29,6 +30,7 @@ process(Opcode, Funct)
 begin
     case Opcode is
         when "000000" => -- R-type instructions
+            ALUOp <= "10";
             case Funct is
                 when "100000" => -- add
                     RegDst <= '1';
@@ -211,6 +213,7 @@ begin
             Jump <= '0';
             Branch <= '0';
             ALUControl <= "0010";
+            ALUOp <= "00";
         when "001001" => -- addiu
             RegDst <= '0';
             ALUSrc <= '1';
@@ -221,6 +224,7 @@ begin
             Jump <= '0';
             Branch <= '0';
             ALUControl <= "0010";
+            ALUOp <= "00";
         when "001100" => -- andi
             RegDst <= '0';
             ALUSrc <= '1';
@@ -231,6 +235,7 @@ begin
             Jump <= '0';
             Branch <= '0';
             ALUControl <= "0000";
+            ALUOp <= "11";
         when "001101" => -- ori
             RegDst <= '0';
             ALUSrc <= '1';
@@ -241,6 +246,7 @@ begin
             Jump <= '0';
             Branch <= '0';
             ALUControl <= "0001";
+            ALUOp <= "11";
         when "001110" => -- xori
             RegDst <= '0';
             ALUSrc <= '1';
@@ -251,6 +257,7 @@ begin
             Jump <= '0';
             Branch <= '0';
             ALUControl <= "0011";
+            ALUOp <= "11";
         when "001111" => -- lui
             RegDst <= '0';
             ALUSrc <= '1';
@@ -261,6 +268,7 @@ begin
             Jump <= '0';
             Branch <= '0';
             ALUControl <= "1111";
+            ALUOp <= "11";
         when "100011" => -- lw
             RegDst <= '0';
             ALUSrc <= '1';
@@ -271,6 +279,7 @@ begin
             Jump <= '0';
             Branch <= '0';
             ALUControl <= "0010";
+            ALUOp <= "00";
         when "101011" => -- sw
             RegDst <= '0';
             ALUSrc <= '1';
@@ -281,6 +290,7 @@ begin
             Jump <= '0';
             Branch <= '0';
             ALUControl <= "0010";
+            ALUOp <= "00";
         when "000100" => -- beq
             RegDst <= '0';
             ALUSrc <= '0';
@@ -291,6 +301,7 @@ begin
             Jump <= '0';
             Branch <= '1';
             ALUControl <= "0110";
+            ALUOp <= "01";
         when "000101" => -- bne
             RegDst <= '0';
             ALUSrc <= '0';
@@ -301,6 +312,7 @@ begin
             Jump <= '0';
             Branch <= '1';
             ALUControl <= "0110";
+            ALUOp <= "01";
         when "000010" => -- j
             RegDst <= '0';
             ALUSrc <= '0';
@@ -311,6 +323,7 @@ begin
             Jump <= '1';
             Branch <= '0';
             ALUControl <= "0000";
+            ALUOp <= "00";
         when "000011" => -- jal
             RegDst <= '0';
             ALUSrc <= '0';
@@ -321,6 +334,7 @@ begin
             Jump <= '1';
             Branch <= '0';
             ALUControl <= "0000";
+            ALUOp <= "00";
         when "100000" => -- lb
             RegDst <= '0';
             ALUSrc <= '1';
@@ -331,6 +345,7 @@ begin
             Jump <= '0';
             Branch <= '0';
             ALUControl <= "0010";
+            ALUOp <= "00";
         when "100001" => -- lh
             RegDst <= '0';
             ALUSrc <= '1';
@@ -341,6 +356,7 @@ begin
             Jump <= '0';
             Branch <= '0';
             ALUControl <= "0010";
+            ALUOp <= "00";
         when "100100" => -- lbu
             RegDst <= '0';
             ALUSrc <= '1';
@@ -351,6 +367,7 @@ begin
             Jump <= '0';
             Branch <= '0';
             ALUControl <= "0010";
+            ALUOp <= "00";
         when "100101" => -- lhu
             RegDst <= '0';
             ALUSrc <= '1';
@@ -361,6 +378,7 @@ begin
             Jump <= '0';
             Branch <= '0';
             ALUControl <= "0010";
+            ALUOp <= "00";
         when "001010" => -- slti
             RegDst <= '0';
             ALUSrc <= '1';
@@ -371,6 +389,7 @@ begin
             Jump <= '0';
             Branch <= '0';
             ALUControl <= "0111";
+            ALUOp <= "11";
         when others =>
             RegDst <= '0';
             ALUSrc <= '0';
@@ -381,6 +400,7 @@ begin
             Jump <= '0';
             Branch <= '0';
             ALUControl <= "0000";
+            ALUOp <= "00";
     end case;
 end process;
 end Behavioral;

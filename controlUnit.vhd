@@ -16,6 +16,9 @@ entity controlUnit is
         MemtoReg : out std_logic;
         RegWrite : out std_logic;
         MemWrite : out std_logic;
+        Jump : out std_logic;
+        Branch : out std_logic;
+        MemRead : out std_logic;
         ALUControl : out std_logic_vector(3 downto 0);
     );
 end controlUnit;
@@ -33,6 +36,9 @@ begin
                     MemtoReg <= '0';
                     RegWrite <= '1';
                     MemWrite <= '0';
+                    MemRead <= '0';
+                    Jump <= '0';
+                    Branch <= '0';
                     ALUControl <= "0010";
                 when "100001" => -- addu
                     RegDst <= '1';
@@ -40,6 +46,9 @@ begin
                     MemtoReg <= '0';
                     RegWrite <= '1';
                     MemWrite <= '0';
+                    MemRead <= '0';
+                    Jump <= '0';
+                    Branch <= '0';
                     ALUControl <= "0010";
                 when "100010" => -- sub
                     RegDst <= '1';
@@ -47,6 +56,9 @@ begin
                     MemtoReg <= '0';
                     RegWrite <= '1';
                     MemWrite <= '0';
+                    MemRead <= '0';
+                    Jump <= '0';
+                    Branch <= '0';
                     ALUControl <= "0110";
                 when "100011" => -- subu
                     RegDst <= '1';
@@ -54,6 +66,9 @@ begin
                     MemtoReg <= '0';
                     RegWrite <= '1';
                     MemWrite <= '0';
+                    MemRead <= '0';
+                    Jump <= '0';
+                    Branch <= '0';
                     ALUControl <= "0110";
                 when "100100" => -- and
                     RegDst <= '1';
@@ -61,6 +76,9 @@ begin
                     MemtoReg <= '0';
                     RegWrite <= '1';
                     MemWrite <= '0';
+                    MemRead <= '0';
+                    Jump <= '0';
+                    Branch <= '0';
                     ALUControl <= "0000";
                 when "100101" => -- or
                     RegDst <= '1';
@@ -68,6 +86,9 @@ begin
                     MemtoReg <= '0';
                     RegWrite <= '1';
                     MemWrite <= '0';
+                    MemRead <= '0';
+                    Jump <= '0';
+                    Branch <= '0';
                     ALUControl <= "0001";
                 when "100110" => -- xor
                     RegDst <= '1';
@@ -75,6 +96,9 @@ begin
                     MemtoReg <= '0';
                     RegWrite <= '1';
                     MemWrite <= '0';
+                    MemRead <= '0';
+                    Jump <= '0';
+                    Branch <= '0';
                     ALUControl <= "0011";
                 when "100111" => -- nor
                     RegDst <= '1';
@@ -82,6 +106,9 @@ begin
                     MemtoReg <= '0';
                     RegWrite <= '1';
                     MemWrite <= '0';
+                    MemRead <= '0';
+                    Jump <= '0';
+                    Branch <= '0';
                     ALUControl <= "1100";
                 when "101010" => -- slt
                     RegDst <= '1';
@@ -89,6 +116,9 @@ begin
                     MemtoReg <= '0';
                     RegWrite <= '1';
                     MemWrite <= '0';
+                    MemRead <= '0';
+                    Jump <= '0';
+                    Branch <= '0';
                     ALUControl <= "0111";
                 when "000000" => -- sll
                     RegDst <= '1';
@@ -96,6 +126,9 @@ begin
                     MemtoReg <= '0';
                     RegWrite <= '1';
                     MemWrite <= '0';
+                    MemRead <= '0';
+                    Jump <= '0';
+                    Branch <= '0';
                     ALUControl <= "1000";
                 when "000010" => -- srl
                     RegDst <= '1';
@@ -103,6 +136,9 @@ begin
                     MemtoReg <= '0';
                     RegWrite <= '1';
                     MemWrite <= '0';
+                    MemRead <= '0';
+                    Jump <= '0';
+                    Branch <= '0';
                     ALUControl <= "1001";
                 when "000011" => -- sra
                     RegDst <= '1';
@@ -110,6 +146,9 @@ begin
                     MemtoReg <= '0';
                     RegWrite <= '1';
                     MemWrite <= '0';
+                    MemRead <= '0';
+                    Jump <= '0';
+                    Branch <= '0';
                     ALUControl <= "1010";
                 when "000100" => -- sllv
                     RegDst <= '1';
@@ -117,6 +156,9 @@ begin
                     MemtoReg <= '0';
                     RegWrite <= '1';
                     MemWrite <= '0';
+                    MemRead <= '0';
+                    Jump <= '0';
+                    Branch <= '0';
                     ALUControl <= "1000";
                 when "000110" => -- srlv
                     RegDst <= '1';
@@ -124,6 +166,9 @@ begin
                     MemtoReg <= '0';
                     RegWrite <= '1';
                     MemWrite <= '0';
+                    MemRead <= '0';
+                    Jump <= '0';
+                    Branch <= '0';
                     ALUControl <= "1001";
                 when "000111" => -- srav
                     RegDst <= '1';
@@ -131,6 +176,9 @@ begin
                     MemtoReg <= '0';
                     RegWrite <= '1';
                     MemWrite <= '0';
+                    MemRead <= '0';
+                    Jump <= '0';
+                    Branch <= '0';
                     ALUControl <= "1010";
                 when "001000" => -- jr
                     RegDst <= '0';
@@ -138,6 +186,9 @@ begin
                     MemtoReg <= '0';
                     RegWrite <= '0';
                     MemWrite <= '0';
+                    MemRead <= '0';
+                    Jump <= '1';
+                    Branch <= '0';
                     ALUControl <= "0000";
                 when others =>
                     RegDst <= '0';
@@ -145,6 +196,9 @@ begin
                     MemtoReg <= '0';
                     RegWrite <= '0';
                     MemWrite <= '0';
+                    MemRead <= '0';
+                    Jump <= '0';
+                    Branch <= '0';
                     ALUControl <= "0000";
             end case;
         when "001000" => -- addi
@@ -153,6 +207,9 @@ begin
             MemtoReg <= '0';
             RegWrite <= '1';
             MemWrite <= '0';
+            MemRead <= '0';
+            Jump <= '0';
+            Branch <= '0';
             ALUControl <= "0010";
         when "001001" => -- addiu
             RegDst <= '0';
@@ -160,6 +217,9 @@ begin
             MemtoReg <= '0';
             RegWrite <= '1';
             MemWrite <= '0';
+            MemRead <= '0';
+            Jump <= '0';
+            Branch <= '0';
             ALUControl <= "0010";
         when "001100" => -- andi
             RegDst <= '0';
@@ -167,6 +227,9 @@ begin
             MemtoReg <= '0';
             RegWrite <= '1';
             MemWrite <= '0';
+            MemRead <= '0';
+            Jump <= '0';
+            Branch <= '0';
             ALUControl <= "0000";
         when "001101" => -- ori
             RegDst <= '0';
@@ -174,6 +237,9 @@ begin
             MemtoReg <= '0';
             RegWrite <= '1';
             MemWrite <= '0';
+            MemRead <= '0';
+            Jump <= '0';
+            Branch <= '0';
             ALUControl <= "0001";
         when "001110" => -- xori
             RegDst <= '0';
@@ -181,6 +247,9 @@ begin
             MemtoReg <= '0';
             RegWrite <= '1';
             MemWrite <= '0';
+            MemRead <= '0';
+            Jump <= '0';
+            Branch <= '0';
             ALUControl <= "0011";
         when "001111" => -- lui
             RegDst <= '0';
@@ -188,6 +257,9 @@ begin
             MemtoReg <= '0';
             RegWrite <= '1';
             MemWrite <= '0';
+            MemRead <= '0';
+            Jump <= '0';
+            Branch <= '0';
             ALUControl <= "1111";
         when "100011" => -- lw
             RegDst <= '0';
@@ -195,6 +267,9 @@ begin
             MemtoReg <= '1';
             RegWrite <= '1';
             MemWrite <= '0';
+            MemRead <= '1';
+            Jump <= '0';
+            Branch <= '0';
             ALUControl <= "0010";
         when "101011" => -- sw
             RegDst <= '0';
@@ -202,6 +277,9 @@ begin
             MemtoReg <= '0';
             RegWrite <= '0';
             MemWrite <= '1';
+            MemRead <= '0';
+            Jump <= '0';
+            Branch <= '0';
             ALUControl <= "0010";
         when "000100" => -- beq
             RegDst <= '0';
@@ -209,6 +287,9 @@ begin
             MemtoReg <= '0';
             RegWrite <= '0';
             MemWrite <= '0';
+            MemRead <= '0';
+            Jump <= '0';
+            Branch <= '1';
             ALUControl <= "0110";
         when "000101" => -- bne
             RegDst <= '0';
@@ -216,6 +297,9 @@ begin
             MemtoReg <= '0';
             RegWrite <= '0';
             MemWrite <= '0';
+            MemRead <= '0';
+            Jump <= '0';
+            Branch <= '1';
             ALUControl <= "0110";
         when "000010" => -- j
             RegDst <= '0';
@@ -223,6 +307,9 @@ begin
             MemtoReg <= '0';
             RegWrite <= '0';
             MemWrite <= '0';
+            MemRead <= '0';
+            Jump <= '1';
+            Branch <= '0';
             ALUControl <= "0000";
         when "000011" => -- jal
             RegDst <= '0';
@@ -230,6 +317,9 @@ begin
             MemtoReg <= '0';
             RegWrite <= '1';
             MemWrite <= '0';
+            MemRead <= '0';
+            Jump <= '1';
+            Branch <= '0';
             ALUControl <= "0000";
         when "100000" => -- lb
             RegDst <= '0';
@@ -237,6 +327,9 @@ begin
             MemtoReg <= '1';
             RegWrite <= '1';
             MemWrite <= '0';
+            MemRead <= '1';
+            Jump <= '0';
+            Branch <= '0';
             ALUControl <= "0010";
         when "100001" => -- lh
             RegDst <= '0';
@@ -244,6 +337,9 @@ begin
             MemtoReg <= '1';
             RegWrite <= '1';
             MemWrite <= '0';
+            MemRead <= '1';
+            Jump <= '0';
+            Branch <= '0';
             ALUControl <= "0010";
         when "100100" => -- lbu
             RegDst <= '0';
@@ -251,6 +347,9 @@ begin
             MemtoReg <= '1';
             RegWrite <= '1';
             MemWrite <= '0';
+            MemRead <= '1';
+            Jump <= '0';
+            Branch <= '0';
             ALUControl <= "0010";
         when "100101" => -- lhu
             RegDst <= '0';
@@ -258,6 +357,9 @@ begin
             MemtoReg <= '1';
             RegWrite <= '1';
             MemWrite <= '0';
+            MemRead <= '1';
+            Jump <= '0';
+            Branch <= '0';
             ALUControl <= "0010";
         when "001010" => -- slti
             RegDst <= '0';
@@ -265,6 +367,9 @@ begin
             MemtoReg <= '0';
             RegWrite <= '1';
             MemWrite <= '0';
+            MemRead <= '0';
+            Jump <= '0';
+            Branch <= '0';
             ALUControl <= "0111";
         when others =>
             RegDst <= '0';
@@ -272,6 +377,9 @@ begin
             MemtoReg <= '0';
             RegWrite <= '0';
             MemWrite <= '0';
+            MemRead <= '0';
+            Jump <= '0';
+            Branch <= '0';
             ALUControl <= "0000";
     end case;
 end process;

@@ -57,6 +57,7 @@ architecture structurual is
 
 	component ControlUnit is
 		port(
+			funct : in std_logic_vector(6 downto 0);
 			opcode : in std_logic_vector(6 downto 0);
 			RegDst : out std_logic;
 			Jump : out std_logic;
@@ -188,7 +189,7 @@ architecture structurual is
 	signal branch : std_logic;
 	signal memRead : std_logic;
 	signal memtoReg : std_logic;
-	signal aluOp : std_logic_vector(2 downto 0);
+	signal aluOp : std_logic_vector(1 downto 0);
 	signal memWrite : std_logic;
 	signal aluSrc : std_logic;
 	signal regWrite : std_logic;
@@ -347,12 +348,7 @@ port map(
 		output => immeditate_extended
 		);
 
-	-- define the ALU control
-	aluctrl : ALUControl	
-	port map(
-		ALUOp => aluOp,
-		ALUControl => ALU_operation
-		);
+
 
 	-- define the second input (B) for the ALU
 	ALU_B_mux : mux2t1_N
@@ -369,7 +365,7 @@ port map(
 	port map(
 		A => reg_o_s,
 		B => ALU_B,
-		ALUControl => ALU_operation,
+		ALUControl => aluOp,
 		result => ALU_result,
 		zero => s_o_zero
 		);

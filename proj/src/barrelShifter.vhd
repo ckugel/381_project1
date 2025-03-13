@@ -85,7 +85,7 @@ begin
     shiftDir : mux2t1_N
     generic map( N => 32)
     port map(
-    i_S => shiftLeft,
+    i_S => i_shiftDirection,
     i_D0 => i_input,
     i_D1 => left_shift_in,
     o_Q => s_data
@@ -94,12 +94,12 @@ begin
     shiftType : mux2t1
     port map(
     i_S => i_shiftArOrLo,
-    i_D0 => '0';
+    i_D0 => '0',
     i_D1 => s_data(31),
     o_Q => shift_bit
 	);
 
-    shift_amount_0_in(30 downto 0) <= (31 downto 1);
+    shift_amount_0_in(30 downto 0) <= s_data(31 downto 1);
     shift_amount_0_in(31) <= shift_bit;
 
     shift_amount_mux0 : mux2t1_N
@@ -112,7 +112,7 @@ begin
 	);
 
 
-    shift_amount_1_in(29 downto 0) <= (31 downto 2);
+    shift_amount_1_in(29 downto 0) <= shift_amount_0_out(31 downto 2);
     shift_amount_1_in(31) <= shift_bit;
     shift_amount_1_in(30) <= shift_bit;
 
@@ -126,7 +126,7 @@ begin
     o_Q => shift_amount_1_out
 );
 
-    shift_amount_2_in(27 downto 0) <= (31 downto 4);
+    shift_amount_2_in(27 downto 0) <= shift_amount_1_out(31 downto 4);
 	shift_amount_2_in(31) <= shift_bit;
 	shift_amount_2_in(30) <= shift_bit;
 	shift_amount_2_in(29) <= shift_bit;
@@ -141,7 +141,7 @@ begin
 	o_Q => shift_amount_2_out
 );
 
-	shift_amount_3_in(23 downto 0) <= (31 downto 8);
+	shift_amount_3_in(23 downto 0) <= shift_amount_2_out(31 downto 8);
 	shift_amount_3_in(31) <= shift_bit;
 	shift_amount_3_in(30) <= shift_bit;
 	shift_amount_3_in(29) <= shift_bit;
@@ -160,7 +160,7 @@ begin
 	o_Q => shift_amount_3_out
 );
 
-	shift_amount_4_in(15 downto 0) <= (31 downto 16);
+	shift_amount_4_in(15 downto 0) <= shift_amount_3_out(31 downto 16);
 	shift_amount_4_in(31) <= shift_bit;
 	shift_amount_4_in(30) <= shift_bit;
 	shift_amount_4_in(29) <= shift_bit;

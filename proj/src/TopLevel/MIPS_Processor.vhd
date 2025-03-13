@@ -55,6 +55,8 @@ architecture structure of MIPS_Processor is
   -- Required overflow signal -- for overflow exception detection
   signal s_Ovfl         : std_logic;  -- TODO: this signal indicates an overflow exception would have been initiated
 
+  signal s_carryOut : std_logic; -- carry out signal from the ALU
+
     signal currentPC : std_logic_vector(31 downto 0); -- coming out of the PC register
     signal nextPC : std_logic_vector(31 downto 0); -- coming out of the mux on the top right in diagram
     signal PCPlus4 : std_logic_vector(31 downto 0); -- coming out of the PC+4 incrementer
@@ -82,7 +84,7 @@ architecture structure of MIPS_Processor is
 	signal reg_o_t : std_logic_vector(31 downto 0);
 	signal s_o_zero : std_logic;
 
-	signal immeditate_extended : std_logic_vector(31 downto 0);
+	signal immediate_extended : std_logic_vector(31 downto 0);
 	signal dmem_read_data : std_logic_vector(31 downto 0);
 	signal ALU_B : std_logic_vector(31 downto 0); -- ALU second input either port s or immediate depending on mux
 	signal ALU_operation : std_logic_vector(31 downto 0); -- post ALU op controller into ALU
@@ -128,19 +130,20 @@ architecture structure of MIPS_Processor is
 	end component;
 
 	component ControlUnit is
-		port(
-			funct : in std_logic_vector(6 downto 0);
-			opcode : in std_logic_vector(6 downto 0);
-			RegDst : out std_logic;
-			Jump : out std_logic;
-			Branch : out std_logic;
-			MemRead : out std_logic;
-			MemtoReg : out std_logic;
-			ALUOp : out std_logic_vector(2 downto 0);
-			MemWrite : out std_logic;
-			ALUSrc : out std_logic;
-			RegWrite : out std_logic
-		);
+	    port(
+		Funct : in std_logic_vector(5 downto 0);
+		opcode : in std_logic_vector(5 downto 0);
+		RegDst : out std_logic;
+		ALUSrc : out std_logic;
+		MemtoReg : out std_logic;
+		MemRead: out std_logic;
+		RegWrite : out std_logic;
+		MemWrite : out std_logic;
+		Jump : out std_logic;
+		Branch : out std_logic;
+		ALUControl : out std_logic_vector(3 downto 0);
+		ALUOp : out std_logic_vector(1 downto 0)
+	    );
 	end component;
 
 	component ProgramCounter is
@@ -167,7 +170,7 @@ architecture structure of MIPS_Processor is
 	end component;
 
 	component reg_n is
-	    generic(n : integer : 32);
+	    generic(n : integer := 32);
 	    port(
 		    i_CLK : std_logic;
 		    i_RST : std_logic;
@@ -175,6 +178,7 @@ architecture structure of MIPS_Processor is
 		    i_Data : std_logic_vector(n - 1 downto 0);
 		    o_Q : std_logic_vector(n-1 downto 0)
 		);
+	end component;
 
 	component mux2t1_N is
 	    generic( N : integer := 16);
@@ -197,8 +201,9 @@ architecture structure of MIPS_Processor is
 	    port (
 		i_A : in std_logic;
 		i_B : in std_logic;
-		o_F : out std_logic;
+		o_F : out std_logic
 		    );
+	end component;
 
 	component Adder is
 	    generic(N : integer := 16);
@@ -257,11 +262,11 @@ begin
 		carryOut => s_carryOut,
 		overflow => s_Ovfl,
 		result => oALUOut,
-		zero => s_o_zero,
+		zero => s_o_zero
 	    );
 	-- define the second input (B) for the ALU
 	ALU_B_mux : mux2t1_N
-	generic map(N => 32);
+	generic map(N => 32)
 	port map(
 		i_S => aluSrc,
 		i_D0 => reg_o_t,
@@ -270,7 +275,7 @@ begin
 		);
 
 	-- define the control unit
-	controlUnit : ControlUnit
+	controlUnit : controlUnit
 	port map(
 		opcode => s_Inst(31 downto 26),
 		RegDst => regDst,
@@ -279,24 +284,24 @@ begin
 		MemRead => memRead,
 		MemtoReg => memtoReg,
 		ALUOp => aluOp,
-		MemWrite => memWrite,
+		MemWrite => s_DMemWr,
 		ALUSrc => aluSrc,
 		RegWrite => regWrite
 		);
 
 	-- define the mux for the ALU result or the data memory read data
 	memToRegMux : mux2t1_N
-	generic map(N => 32);
+	generic map(N => 32)
 	port map(
 	i_S => memtoReg,
-	i_D0 => ALU_result,
-	i_D1 => dmem_read_data,
+	i_D0 => oALUOut,
+	i_D1 => s_DMemOut,
 	o_Q => write_data_reg
 	);
 
 	-- define the mux for which register to write to
 	regDstMux : mux2t1_N
-	generic map(N => 5);
+	generic map(N => 5)
 	port map(
 		i_S => regDst,
 		i_D0 => s_Inst(20 downto 16),
@@ -313,7 +318,7 @@ begin
 
 	-- Define the program counter
 	programCounterReg : reg_n
-	generic map(n => 32);
+	generic map(n => 32)
 	port map(
 		    i_CLK => iCLK,
 		    i_RST => iRST,
@@ -341,7 +346,7 @@ begin
 
 -- define the mux for the ALU second input into jump address
     preNextPCmux : mux2t1_N
-    generic map(N => 32);
+    generic map(N => 32)
     port map(
 	i_S => aluZeroAndBranch,
 	i_D0 => nextPC,
@@ -350,20 +355,20 @@ begin
 	);
 
     nextPCmux : mux2t1_N
-    generic map(N => 32);
+    generic map(N => 32)
     port map(
 	i_S => jump,
 	i_D0 => PCPlus4,
-	i_D1 => jump_address,
+	i_D1 => jumpAddress,
 	o_Q => nextPC
     );
 
 	-- define the jump adder
     jumpAdder : Adder 
-    generic map(N => 32);
+    generic map(N => 32)
     port map(
 	Cin => '0',
-	i_A nextPC,
+	i_A => nextPC,
 	i_B => immediate_shifted_2,
 	Cout => open,
 	o_sum => aluJump

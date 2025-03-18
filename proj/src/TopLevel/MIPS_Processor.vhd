@@ -66,9 +66,6 @@ architecture structure of MIPS_Processor is
     signal immediate_shifted_2 : std_logic_vector(31 downto 0); -- coming out of the shifter for the jump adder
     signal aluZeroAndBranch : std_logic;
 
-	signal writeReg : std_logic_vector(4 downto 0); -- coming out of the mux for the register file
-
-
 	signal regDst : std_logic;
 	signal jump : std_logic;
 	signal branch : std_logic;
@@ -77,11 +74,9 @@ architecture structure of MIPS_Processor is
 	signal aluOp : std_logic_vector(1 downto 0);
 	signal memWrite : std_logic;
 	signal aluSrc : std_logic;
-	signal regWrite : std_logic;
+	signal s_RegWr : std_logic;
 
 	signal write_data_reg : std_logic_vector(31 downto 0);
-	signal reg_o_s : std_logic_vector(31 downto 0);
-	signal reg_o_t : std_logic_vector(31 downto 0);
 	signal s_o_zero : std_logic;
 
 	signal immediate_extended : std_logic_vector(31 downto 0);
@@ -253,6 +248,8 @@ begin
 
   -- TODO: Ensure that s_Halt is connected to an output control signal produced from decoding the Halt instruction (Opcode: 01 0100)
   -- TODO: Ensure that s_Ovfl is connected to the overflow output of your ALU
+    s_DMemAddr <= oALUOut;
+    s_DMemData <= o_s;
 
     MainALU: ALU
 	port map(
@@ -286,7 +283,7 @@ begin
 		ALUOp => aluOp,
 		MemWrite => s_DMemWr,
 		ALUSrc => aluSrc,
-		RegWrite => regWrite
+		RegWrite => s_RegWr
 		);
 
 	-- define the mux for the ALU result or the data memory read data
